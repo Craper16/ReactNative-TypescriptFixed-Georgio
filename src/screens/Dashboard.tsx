@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, RefreshControl, FlatList} from 'react-native';
+import {View, Text, StyleSheet, RefreshControl} from 'react-native';
 import {ActivityIndicator, TextInput, Button} from 'react-native-paper';
 import {useFetchArticlesQuery} from '../redux/api/articlesApi';
 import React, {useState, useCallback, useEffect} from 'react';
@@ -12,6 +12,7 @@ import {
 } from '../redux/articles/articlesSlice';
 import {articleData} from '../redux/articles/articlesSlice';
 import Article from '../components/articles/Article';
+import {FlashList} from '@shopify/flash-list';
 import * as Keychain from 'react-native-keychain';
 
 const Dashboard = () => {
@@ -127,7 +128,7 @@ const Dashboard = () => {
         </View>
       )}
       {search ? (
-        <FlatList
+        <FlashList
           data={filteredData}
           keyExtractor={(item, index: number) => index.toString()}
           ListEmptyComponent={() => (
@@ -135,10 +136,11 @@ const Dashboard = () => {
               <Text style={styles.noArticlesFound}>No articles found!</Text>
             </View>
           )}
+          estimatedItemSize={200}
           renderItem={renderArticle}
         />
       ) : (
-        <FlatList
+        <FlashList
           data={articlesData}
           keyExtractor={(item, index: number) => index.toString()}
           onEndReached={handleLoadMore}
@@ -151,6 +153,7 @@ const Dashboard = () => {
               refreshing={isRefreshing}
             />
           }
+          estimatedItemSize={200}
           renderItem={item => renderArticle(item)}
         />
       )}
