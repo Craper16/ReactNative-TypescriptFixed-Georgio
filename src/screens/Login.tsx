@@ -25,7 +25,11 @@ const Login = () => {
     accessToken: string,
     status: string,
   ) => {
-    await Keychain.setGenericPassword(accessToken, status);
+    try {
+      await Keychain.setGenericPassword(accessToken, status);
+    } catch (error) {
+      console.log('Keychain could not be accessed', error);
+    }
   };
 
   useEffect(() => {

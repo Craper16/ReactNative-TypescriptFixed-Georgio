@@ -7,9 +7,14 @@ export const articlesApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: API_KEY,
     prepareHeaders: async headers => {
-      const accessToken = await Keychain.getGenericPassword();
-      if (accessToken) {
-        headers.set('Authorization', `Bearer ${accessToken.username}`);
+      try {
+        const accessToken = await Keychain.getGenericPassword();
+
+        if (accessToken) {
+          headers.set('Authorization', `Bearer ${accessToken.username}`);
+        }
+      } catch (error) {
+        console.log('Keychain could not be accessed', error);
       }
     },
   }),

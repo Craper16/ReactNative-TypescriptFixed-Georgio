@@ -1,7 +1,6 @@
 import {View, Text, StyleSheet, RefreshControl, FlatList} from 'react-native';
 import {ActivityIndicator, TextInput, Button} from 'react-native-paper';
 import {useFetchArticlesQuery} from '../redux/api/articlesApi';
-import {FlashList} from '@shopify/flash-list';
 import React, {useState, useCallback, useEffect} from 'react';
 import {useAppDispatch, useAppSelector} from '../redux/hooks';
 import {defaultState} from '../redux/auth/authSlice';
@@ -13,7 +12,7 @@ import {
 } from '../redux/articles/articlesSlice';
 import {articleData} from '../redux/articles/articlesSlice';
 import Article from '../components/articles/Article';
-import EncryptedStorage from 'react-native-encrypted-storage';
+import * as Keychain from 'react-native-keychain';
 
 const Dashboard = () => {
   const dispatch = useAppDispatch();
@@ -61,10 +60,18 @@ const Dashboard = () => {
     setSearch('');
   };
 
+  const resetAccessToken = async () => {
+    try {
+      await Keychain.resetGenericPassword();
+    } catch (error) {
+      console.log('Keychain cannot be accessed', error);
+    }
+  };
+
   const handleLogout = async () => {
     dispatch(defaultState());
     dispatch(defaultArticles());
-    await EncryptedStorage.clear();
+    await resetAccessToken();
   };
 
   const renderFooterComponent = () =>
